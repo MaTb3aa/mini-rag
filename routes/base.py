@@ -6,7 +6,7 @@ fastapi_router = APIRouter(
 )
 
 @fastapi_router.get("/")
-def message():
+async def message():
     app_name = os.getenv("APP_NAME")
     app_version = os.getenv("APP_VERSION")
     return {
