@@ -22,4 +22,25 @@ Clone the repository:
 ```sh
 git clone https://github.com/yourusername/mini-rag.git
 cd mini-rag
+$ pip install -r requirements.txt
+```
+
+### setup the environment variables 
+
+```bash
+$ cp .env.example .env
+```
+
+
+### Activate your private env 
+
+```bash
+$ conda activate mini-rag
+```
+
+
+## How to run uvicorn
+
+```bash
+$ uvicorn main:app --reload --host 0.0.0.0 --port 5001
 ```
