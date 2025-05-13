@@ -1,5 +1,5 @@
-from fastapi import APIRouter
-from helpers.config import get_settings
+from fastapi import APIRouter, Depends
+from helpers.config import get_settings, Settings
 
 fastapi_router = APIRouter(
     prefix='/mini-rag/v1',
@@ -7,7 +7,7 @@ fastapi_router = APIRouter(
 )
 
 @fastapi_router.get("/")
-async def message():
+async def message(app_settings: Settings =Depends(get_settings)):
     """
     Welcome message for the API."""
     app_settings = get_settings()
