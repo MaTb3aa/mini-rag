@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends
 from helpers.config import get_settings, Settings
 
 fastapi_router = APIRouter(
-    prefix='/mini-rag/v1',
-    tags=['mini-rag'],
+    prefix='/api/v1/data',
+    tags=['api-v1-data'],
 )
 
 @fastapi_router.get("/")

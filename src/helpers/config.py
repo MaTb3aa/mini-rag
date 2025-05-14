@@ -10,6 +10,10 @@ class Settings(BaseSettings):
     APP_AUTHOR : str
     APP_AUTHOR_EMAIL : str
 
+    ALLOWED_EXTENSIONS : list
+    MAX_FILE_SIZE : int
+
+
 
     class Config:
         env_file = ".env"
