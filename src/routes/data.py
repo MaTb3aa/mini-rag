@@ -1,7 +1,14 @@
 from fastapi import APIRouter, Depends, UploadFile , status
 from fastapi.responses import JSONResponse
 from helpers.config import get_settings, Settings
-from controllers import DataController, ProjectController
+import os
+from controllers import ProjectController, DataController
+from models import ResponseSignal
+import aiofiles
+import logging
+
+logger = logging.getLogger('uvicorn.error')
+
 fastapi_router = APIRouter(
     prefix='/api/v1/data',
     tags=['api-v1-data'],
@@ -19,7 +26,8 @@ async def upload_data(project_id: str, file : UploadFile, app_settings: Settings
     app_author_email = app_settings.APP_AUTHOR_EMAIL
     app_description = app_settings.APP_DESCRIPTION
 
-    is_valid, result_signal = DataController().validate_file(file=file)
+    data_controller = DataController()
+    is_valid, result_signal = data_controller.validate_file(file=file)
 
     if not is_valid:
         return JSONResponse(
@@ -31,13 +39,29 @@ async def upload_data(project_id: str, file : UploadFile, app_settings: Settings
         )
     
     project_dir = ProjectController().get_project_dir(project_id=project_id)
+    file_path = data_controller.generate_unique_filename(filename=file.filename, project_id=project_id)
+   
 
+    try:
+        async with aiofiles.open(file_path, "wb") as f:
+            while chunk := await file.read(app_settings.FILE_DEFAULT_CHUNK_SIZE):
+                await f.write(chunk)
+    except Exception as e:
+        logger.error(f"Error saving file: {e}")
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={
+                "signal": ResponseSignal.FILE_NOT_SAVED.value,
+            },
+        )
+    
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={
             "message": f"File uploaded successfully: {result_signal}",
             "project_id": project_id,
-             "file_path": project_dir,
+            "file_path": project_dir,
+            "signal": ResponseSignal.FILE_SAVED.value,
             
         },
 

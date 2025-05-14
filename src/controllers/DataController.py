@@ -1,6 +1,9 @@
 from fastapi import UploadFile
 from controllers.BaseController import BaseController
 from models import ResponseSignal
+from .ProjectController import ProjectController
+import re
+import os
 class DataController(BaseController):
     def __init__(self):
         super().__init__()
@@ -20,3 +23,29 @@ class DataController(BaseController):
 
 
         return True, ResponseSignal.FILE_UPLOADED
+
+    def generate_unique_filename(self, filename: str,project_id: str) -> str:
+        """
+        Generate a unique filename for the uploaded file.
+        """
+
+        unique_random_key = self.generate_random_string()
+        project_path = ProjectController().get_project_dir(project_id=project_id)
+        
+        clean_filename = self.get_clean_file_name(filename=filename)
+        new_filename = os.path.join(project_path, f"{unique_random_key}_{clean_filename}")
+
+        while os.path.exists(new_filename):
+            unique_random_key = self.generate_random_string()
+            new_filename = os.path.join(project_path, f"{unique_random_key}_{clean_filename}")
+
+        return new_filename
+    
+    def get_clean_file_name(self, filename: str) -> str:
+        """
+        Get a clean file name by removing special characters.
+        """
+        clean_filename = re.sub(r'[^\w]', '', filename.strip())
+
+        clean_filename = clean_filename.replace(" ", "_")
+        return clean_filename

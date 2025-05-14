@@ -12,6 +12,7 @@ class Settings(BaseSettings):
 
     ALLOWED_EXTENSIONS : list
     MAX_FILE_SIZE : int
+    FILE_DEFAULT_CHUNK_SIZE : int
 
 
 
