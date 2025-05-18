@@ -12,3 +12,4 @@ class ResponseSignal(Enum):
     FILE_NOT_DELETED = "File not deleted"
     FILE_NOT_SAVED = "File not saved"
     FILE_SAVED = "File saved successfully"
+    

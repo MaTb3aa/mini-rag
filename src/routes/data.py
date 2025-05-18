@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, UploadFile , status
 from fastapi.responses import JSONResponse
 from helpers.config import get_settings, Settings
 import os
-from controllers import ProjectController, DataController
+from controllers import ProjectController, DataController, ProcessController
 from models import ResponseSignal
 import aiofiles
 import logging
@@ -20,12 +20,7 @@ async def upload_data(project_id: str, file : UploadFile, app_settings: Settings
     """
     Upload data to the project.
     """
-    app_settings = get_settings()
-    app_name = app_settings.APP_NAME
-    app_version = app_settings.APP_VERSION
-    app_author = app_settings.APP_AUTHOR
-    app_author_email = app_settings.APP_AUTHOR_EMAIL
-    app_description = app_settings.APP_DESCRIPTION
+   
 
     data_controller = DataController()
     is_valid, result_signal = data_controller.validate_file(file=file)
@@ -74,7 +69,17 @@ async def process_endpoint(project_id: str, request: ProcessRequest, app_setting
     Process data in the project.
     """
     file_id = request.file_id
+    chunk_size = process_controller.chunk_size
+    overlap_size = process_controller.overlap_size
 
+    process_controller = ProcessController(project_id=project_id)
+    file_content = process_controller.get_file_content(file_id=file_id)
+    file_chunks = process_controller.process_file_conteent(
+        file_content=file_content,
+        file_id = file_id,
+        chunk_size=chunk_size,
+        overlap_size=overlap_size,
+    )
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={
