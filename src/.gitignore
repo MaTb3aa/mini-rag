@@ -172,3 +172,8 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+# ignore files in assests
+src/assets/files/*
+!src/assets/files/.gitkeep

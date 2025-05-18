@@ -24,7 +24,7 @@ class DataController(BaseController):
 
         return True, ResponseSignal.FILE_UPLOADED
 
-    def generate_unique_filename(self, filename: str,project_id: str) -> str:
+    def generate_unique_path(self, filename: str,project_id: str) -> str:
         """
         Generate a unique filename for the uploaded file.
         """
@@ -33,13 +33,13 @@ class DataController(BaseController):
         project_path = ProjectController().get_project_dir(project_id=project_id)
         
         clean_filename = self.get_clean_file_name(filename=filename)
-        new_filename = os.path.join(project_path, f"{unique_random_key}_{clean_filename}")
+        new_file_path = os.path.join(project_path, f"{unique_random_key}_{clean_filename}")
 
-        while os.path.exists(new_filename):
+        while os.path.exists(new_file_path):
             unique_random_key = self.generate_random_string()
-            new_filename = os.path.join(project_path, f"{unique_random_key}_{clean_filename}")
+            new_file_path = os.path.join(project_path, f"{unique_random_key}_{clean_filename}")
 
-        return new_filename
+        return new_file_path, unique_random_key + "_" + clean_filename
     
     def get_clean_file_name(self, filename: str) -> str:
         """
