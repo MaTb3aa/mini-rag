@@ -68,26 +68,11 @@ async def upload_data(project_id: str, file : UploadFile, app_settings: Settings
 
     )
 
-@data_rounter.post("/process/{project_id}")
+@fastapi_router.post("/process/{project_id}")
 async def process_endpoint(project_id: str, request: ProcessRequest, app_settings: Settings = Depends(get_settings)):
     """
     Process data in the project.
     """
-    app_settings = get_settings()
-    app_name = app_settings.APP_NAME
-    app_version = app_settings.APP_VERSION
-    app_author = app_settings.APP_AUTHOR
-    app_author_email = app_settings.APP_AUTHOR_EMAIL
-    app_description = app_settings.APP_DESCRIPTION
-
-    # data_controller = DataController()
-    # result_signal = data_controller.process_data(
-    #     project_id=project_id,
-    #     file_id=request.file_id,
-    #     chunk_size=request.chunk_size,
-    #     overlap_size=request.overlap_size,
-    #     do_reset=request.do_reset,
-    # )
     file_id = request.file_id
 
     return JSONResponse(

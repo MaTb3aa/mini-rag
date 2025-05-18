@@ -11,7 +11,7 @@ class ProcessController(BaseController):
         self.project_controller = ProjectController()
         self.project_path = self.project_controller.get_project_dir(project_id=self.project_id)
 
-    def get_file_exists(self, file_id: str) -> bool:
+    def get_file_extension(self, file_id: str) -> bool:
         """
         Check if the file exists in the project directory.
         """
@@ -21,11 +21,11 @@ class ProcessController(BaseController):
         """
         Get the appropriate file loader based on the file extension.
         """
-        file_extension = self.get_file_exists(self)
+        file_extension = self.get_file_extension(file_id=file_id)
         if file_extension == ProcessingEnum.TXT:
             return TextLoader(file_path, encoding="utf-8")
         elif file_extension == ProcessingEnum.PDF:
             return PyMuPDFLoader(file_path, encoding="utf-8")
         else:
             raise ValueError(f"Unsupported file type: {file_extension}")
-       
+    
