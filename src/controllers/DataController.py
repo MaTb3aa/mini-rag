@@ -43,9 +43,18 @@ class DataController(BaseController):
     
     def get_clean_file_name(self, filename: str) -> str:
         """
-        Get a clean file name by removing special characters.
+        Get a clean file name by removing special characters but preserving the extension.
+        Args:
+            filename (str): Original filename with extension
+        Returns:
+            str: Clean filename with extension preserved
         """
-        clean_filename = re.sub(r'[^\w]', '', filename.strip())
-
-        clean_filename = clean_filename.replace(" ", "_")
-        return clean_filename
+        # Split filename and extension
+        name, ext = os.path.splitext(filename)
+        
+        # Clean the filename part only
+        clean_name = re.sub(r'[^\w]', '', name.strip())
+        clean_name = clean_name.replace(" ", "_")
+        
+        # Return cleaned name with original extension
+        return f"{clean_name}{ext}"
