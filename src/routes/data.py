@@ -62,7 +62,7 @@ async def upload_data(request: Request, project_id: str, file : UploadFile, app_
         status_code=status.HTTP_200_OK,
         content={
             "message": f"File uploaded successfully: {result_signal}",
-            "project_id": str(project_id),
+            "project_id": str(project.id),
             "file_path": project_dir,
             "signal": ResponseSignal.FILE_SAVED.value,
             "file_id": file_id,

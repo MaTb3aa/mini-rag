@@ -7,11 +7,12 @@ class ProjectModel(BaseDataModel):
         super().__init__(db_client=db_client)
         self.collection = self.db_client[DataBaseEnum.COLLECTION_PROJECT_NAME.value]
     
-    async def create_project(self,project):
+    async def create_project(self,project:Project):
         # without await it will conintue without getting data
-        result = await self.collection.insert_one(project.dict())
-        project.id = result.inserted_id
-        return project.id
+        doc = project.dict(exclude_none=True, by_alias=True)
+        result = await self.collection.insert_one(doc)
+        doc["_id"] = result.inserted_id
+        return Project(**doc)
 
     async def get_project_or_create_once(self,project_id:str):
 
@@ -22,8 +23,7 @@ class ProjectModel(BaseDataModel):
         if record is None:
             # create new project
             project = Project(project_id= project_id)
-            project = await self.create_project(project=project)
-            return project
+            return await self.create_project(project=project)
         
         return Project(**record)
 

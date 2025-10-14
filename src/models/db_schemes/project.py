@@ -4,8 +4,7 @@ from typing import Optional
 from bson.objectid import ObjectId
 
 class Project(BaseModel):
-    _id: Optional[ObjectId]
-    
+    id: Optional[ObjectId] = Field(default=None, alias="_id")
     project_id: str = Field(min_length=1) 
 
     
@@ -17,7 +16,11 @@ class Project(BaseModel):
 
     class Config:
         """ ignore any wired data"""
+        populate_by_name = True
         arbitrary_types_allowed = True
+        json_encoders = {
+            ObjectId: str
+        }
         
     
 
