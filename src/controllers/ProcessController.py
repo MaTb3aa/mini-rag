@@ -1,6 +1,8 @@
 from .BaseController import BaseController
 from .ProjectController import ProjectController
 import os
+from pathlib import Path
+
 from langchain_community.document_loaders import TextLoader
 from langchain_community.document_loaders import PyMuPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -11,9 +13,11 @@ class ProcessController(BaseController):
         super().__init__()
         self.project_id = project_id
         self.project_controller = ProjectController()
-        self.project_path = self.project_controller.get_project_dir(project_id=self.project_id)
+        self.project_path = os.path.abspath(self.project_controller.get_project_dir(project_id=self.project_id))
+
 
     def get_file_extension(self, file_id: str) -> str:
+
         ext = os.path.splitext(file_id)[1].lower()
         if not ext:
             raise ValueError(f"File '{file_id}' does not have an extension.")
@@ -24,7 +28,12 @@ class ProcessController(BaseController):
         Get the appropriate file loader based on the file extension.
         """
         file_extension = self.get_file_extension(file_id=file_id)
-        file_path = os.path.join(self.project_path, file_id)
+
+        file_path = str(Path(self.project_path) / file_id)
+
+        # Verify file exists before creating loader
+        if not os.path.exists(file_path):
+            raise ValueError(f"File not found at path: {file_path}")
 
         if file_extension == '.txt':
             return TextLoader(file_path, encoding="utf-8")
@@ -38,10 +47,14 @@ class ProcessController(BaseController):
         Get the content of the file using the appropriate loader.
         """
         loader = self.get_file_loader(file_id=file_id)
-        documents = loader.load()
-        return documents
+        try:
+            documents = loader.load()
+            return documents
+        except Exception as e:
+            raise ValueError(f"Error loading file content: {str(e)}")
 
-    def process_file_conteent(self, file_content: list,file_id : str, chunk_size: int = 100, overlap_size: int = 20):
+
+    def process_file_content(self, file_content: list,file_id : str, chunk_size: int = 100, overlap_size: int = 20):
         """
         Process the file content and split it into chunks.
         """
@@ -63,4 +76,10 @@ class ProcessController(BaseController):
             file_content_texts,
             metadatas = file_content_metadata
         )
-        return chunks
+        processed_chunks = []
+        for chunk in chunks:
+            processed_chunks.append({
+                "page_content": chunk.page_content,
+                "metadata": chunk.metadata
+            })
+        return processed_chunks
