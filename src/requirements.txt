@@ -9,3 +9,4 @@ langchain==0.1.12
 langchain-community>=0.0.28,<0.1.0
 tiktoken==0.6.0
 pypdf==4.1.0
+motor==3.4.0
