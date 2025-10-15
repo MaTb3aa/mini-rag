@@ -30,7 +30,7 @@ class ProjectModel(BaseDataModel):
         # without await it will conintue without getting data
         doc = project.dict(exclude_none=True, by_alias=True)
         result = await self.collection.insert_one(doc)
-        doc["_id"] = result.inserted_id
+        doc["id"] = result.inserted_id
         return Project(**doc)
 
     async def get_project_or_create_once(self,project_id:str):
