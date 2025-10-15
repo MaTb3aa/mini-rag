@@ -25,19 +25,27 @@ cd mini-rag
 $ pip install -r requirements.txt
 ```
 
-### setup the environment variables 
+### setup the environment variables
 
 ```bash
 $ cp .env.example .env
 ```
 
+### Run Docker Compose Services
 
-### Activate your private env 
+```bash
+cd docker
+cp .env.exmaple .env
+
+```
+
+- update `.env` with your credentials
+
+### Activate your private env
 
 ```bash
 $ conda activate mini-rag
 ```
-
 
 ## How to run uvicorn
 
